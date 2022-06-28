@@ -1,0 +1,27 @@
+logging:
+  level:
+    root: INFO
+
+server:
+  port: 9099
+
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: streams-showcase-consumer
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.DoubleDeserializer
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.DoubleSerializer
+
+streamsexp:
+  primitiveRecordSourceTopic: p-source
+  primitiveRecordSinkTopic: p-sink
+  simpleRecordSourceTopic: s-souce
+  simpleRecordSinkTopic: s-sink
+  singlePartitionSourceTopic: 1p-source
+  singlePartitionSinkTopic: 1p-sink
