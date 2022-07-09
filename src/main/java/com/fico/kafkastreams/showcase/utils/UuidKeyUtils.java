@@ -10,6 +10,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UuidKeyUtils {
 
+    public static final int DEFAULT_KEYSET_SIZE = 10;
+
     public List<String> getSingleUuidKey() {
         List<String> uuidKey = new ArrayList<>(1);
         uuidKey.add(UUID.randomUUID().toString());

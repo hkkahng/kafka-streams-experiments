@@ -50,4 +50,26 @@ public class PrimitiveRecordProducerService {
             log.info("sending key:value {}:{} to kafka topic", currentKey, currentValue);
         }
     }
+
+    @Async
+    public void sendRandomPrimitiveRecords(int recordCount, int uniqueKeyCount) {
+        List<String> keyset = getRandomKeyset(uniqueKeyCount);
+
+        String currentKey;
+        Double currentValue;
+        log.info("Sending [{}] random records with a unique keyset size of [{}] to kafka topic", recordCount, uniqueKeyCount);
+        for (int i = 0; i < recordCount; i++) {
+            currentKey = uuidKeyUtils.selectRandomKey(keyset);
+            currentValue = RandomUtils.nextDouble(0, 100);
+            primitiveRecordProducer.sendRecord(currentKey, currentValue);
+        }
+    }
+
+    public List<String> getRandomKeyset() {
+        return getRandomKeyset(UuidKeyUtils.DEFAULT_KEYSET_SIZE);
+    }
+
+    public List<String> getRandomKeyset(int keysetSize) {
+        return uuidKeyUtils.getMultipleUuidKeys(keysetSize);
+    }
 }

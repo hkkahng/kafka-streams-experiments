@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -14,6 +15,8 @@ import java.util.Map;
 public class StreamsController {
 
     private final StreamsExpProperties streamsExpProperties;
+
+    private final PrimitiveProcessingService primitiveProcessingService;
 
     @GetMapping("/expectedTopics")
     public ResponseEntity<Map<String, String>> expectedTopics() {
@@ -26,5 +29,10 @@ public class StreamsController {
         expectedTopics.put("single partition sink topic", streamsExpProperties.getSinglePartitionSinkTopic());
 
         return ResponseEntity.ok(expectedTopics);
+    }
+
+    @GetMapping("/metricNames")
+    public ResponseEntity<List<String>> getMetrics() {
+        return ResponseEntity.ok(primitiveProcessingService.getStreamsMetricsNames());
     }
 }

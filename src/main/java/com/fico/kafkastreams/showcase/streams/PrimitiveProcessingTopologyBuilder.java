@@ -16,6 +16,7 @@ import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Named;
 import org.apache.kafka.streams.kstream.SlidingWindows;
 import org.apache.kafka.streams.kstream.TimeWindowedKStream;
+import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
 import org.apache.kafka.streams.kstream.Window;
 import org.apache.kafka.streams.kstream.Windowed;
 import org.apache.kafka.streams.state.KeyValueStore;
@@ -69,6 +70,42 @@ public class PrimitiveProcessingTopologyBuilder {
 
         recordStream
                 .peek((key, value) -> log.info("no-op-1: key [{}], value [{}]", key, value), Named.as("no-op-node-1"))
+                .to(streamsExpProperties.getPrimitiveRecordSinkTopic());
+
+        Topology topology = streamsBuilder.build(streamProperties());
+        log.info(topology.describe().toString());
+
+        return topology;
+    }
+
+    public Topology noOpWithRepartitionsTopology() {
+        streamsBuilder = new StreamsBuilder();
+        logSourceAndSinkTopicInfo();
+
+        KStream<String, Double> inputStream = streamsBuilder.stream(streamsExpProperties.getPrimitiveRecordSourceTopic());
+
+        inputStream
+                .peek((key, value) -> log.info("no-op-1: key [{}], value [{}]", key, value), Named.as("no-op-node-1"))
+                .repartition()
+                .peek((key, value) -> log.info("no-op-1: key [{}], value [{}]", key, value), Named.as("no-op-node-2"))
+                .repartition()
+                .to(streamsExpProperties.getPrimitiveRecordSinkTopic());
+
+        Topology topology = streamsBuilder.build();
+        log.info(topology.describe().toString());
+
+        return topology;
+    }
+
+    public Topology noOpTopologyWithSimpleValueTransformer() {
+        streamsBuilder = new StreamsBuilder();
+
+        logSourceAndSinkTopicInfo();
+
+        KStream<String, Double> recordStream = streamsBuilder.stream(streamsExpProperties.getPrimitiveRecordSourceTopic());
+
+        recordStream
+                .transformValues(() -> new PrimitiveRecordValueTransformer(), Named.as("simple-value-transformer"))
                 .to(streamsExpProperties.getPrimitiveRecordSinkTopic());
 
         Topology topology = streamsBuilder.build(streamProperties());

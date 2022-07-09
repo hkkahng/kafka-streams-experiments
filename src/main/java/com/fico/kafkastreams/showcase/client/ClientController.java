@@ -41,4 +41,12 @@ public class ClientController {
 
         return ResponseEntity.ok(randomKeys);
     }
+
+    @GetMapping("/sendPrimitiveRecords")
+    public ResponseEntity sendRandomPrimitiveRecords(@RequestParam("recordCount") int recordCount,
+                                                           @RequestParam("keyCount") int keyCount) {
+        log.info("Received request for sending [{}] random primitive records using a key pool size of [{}]", recordCount, keyCount);
+        primitiveRecordProducerService.sendRandomPrimitiveRecords(recordCount, keyCount);
+        return ResponseEntity.ok().build();
+    }
 }
