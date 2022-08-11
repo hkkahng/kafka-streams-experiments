@@ -32,15 +32,14 @@ public class DefaultMetricsService implements MetricsService {
 
         HISTOGRAMS.put(Histograms.PROCESSING_LATENCY.getKey(), DistributionSummary
                 .builder(Histograms.PROCESSING_LATENCY.getKey())
-                .publishPercentiles(0.90, 0.95)
-                .serviceLevelObjectives(90, 95)
+                .publishPercentiles(0.50, 0.75, 0.90, 0.95)
                 .publishPercentileHistogram()
                 .register(meterRegistry));
 
-        log.info("meters found:");
-        for (Meter meter : meterRegistry.getMeters()) {
-            log.info("{}", meter.getId().getName());
-        }
+        //log.info("meters found:");
+        //for (Meter meter : meterRegistry.getMeters()) {
+        //    log.info("{}", meter.getId().getName());
+        //}
     }
 
     @Override

@@ -7,20 +7,19 @@ import java.time.Duration;
 
 public final class WindowUtils {
 
-    public static final int DEFAULT_WINDOW_SIZE_IN_MINUTES = 3;
-    public static final int DEFAULT_WINDOW_ADVANCE_INTERVAL_IN_MINUTES = 1;
-    public static final int DEFAULT_GRACE_PERIOD_IN_MINUTES = 60;
+    public static final int DEFAULT_WINDOW_SIZE_IN_MINUTES = 2;
+    public static final int DEFAULT_WINDOW_ADVANCE_INTERVAL_IN_SECONDS = 30;
+    public static final int DEFAULT_GRACE_PERIOD_IN_MINUTES = 5;
+    public static final int DEFAULT_WINDOW_RETENTION_IN_MINUTES = 30;
 
     public static final Duration DEFAULT_WINDOW_SIZE = Duration.ofMinutes(DEFAULT_WINDOW_SIZE_IN_MINUTES);
-    public static final Duration DEFAULT_WINDOW_ADVANCE_INTERVAL = Duration.ofMinutes(DEFAULT_WINDOW_ADVANCE_INTERVAL_IN_MINUTES);
+    public static final Duration DEFAULT_WINDOW_ADVANCE_INTERVAL = Duration.ofSeconds(DEFAULT_WINDOW_ADVANCE_INTERVAL_IN_SECONDS);
     public static final Duration DEFAULT_GRACE_PERIOD = Duration.ofMinutes(DEFAULT_GRACE_PERIOD_IN_MINUTES);
 
 
     public static TimeWindows getDefaultTimeWindow() {
         return TimeWindows
-                .of(DEFAULT_WINDOW_SIZE)
-                .advanceBy(DEFAULT_WINDOW_ADVANCE_INTERVAL)
-                .grace(DEFAULT_GRACE_PERIOD);
+                .ofSizeWithNoGrace(DEFAULT_WINDOW_SIZE);
     }
 
     public static TimeWindows getTimeWindow(int windowSizeMinutes, int windowAdvanceIntervalMinutes, int gracePeriodMinutes) {

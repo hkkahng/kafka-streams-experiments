@@ -12,6 +12,8 @@ import static org.apache.kafka.streams.StreamsConfig.producerPrefix;
 
 public abstract class StreamConfigurationUtils {
 
+    public static final String PROCESSING_START_HEADER = "processing-start";
+
     public static Properties streamProperties() {
         Properties streamProperties = new Properties();
         streamProperties.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-exp");
@@ -43,5 +45,6 @@ public abstract class StreamConfigurationUtils {
 
         return streamProperties;
     }
+
 
 }

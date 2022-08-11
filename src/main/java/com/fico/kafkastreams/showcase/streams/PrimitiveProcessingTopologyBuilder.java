@@ -30,6 +30,7 @@ public class PrimitiveProcessingTopologyBuilder {
     private final DefaultMetricsService metricsService;
 
     private StreamsBuilder streamsBuilder;
+    private StateStoreUtils stateStoreUtils;
 
 
     public Topology sumAggregationTopology() {
@@ -81,17 +82,21 @@ public class PrimitiveProcessingTopologyBuilder {
 
     public Topology noOpWithRepartitionsTopology() {
         streamsBuilder = new StreamsBuilder();
+        stateStoreUtils = new StateStoreUtils();
         logSourceAndSinkTopicInfo();
+
+        streamsBuilder.addStateStore(stateStoreUtils.getWindowedStateStore(StateStoreUtils.STATE_STORE_1_NAME));
 
         KStream<String, Double> inputStream = streamsBuilder.stream(streamsExpProperties.getPrimitiveRecordSourceTopic());
 
         inputStream
                 .transformValues(PrimitiveRecordMarkStartTimestamp::new)
-                .peek((key, value) -> log.info("no-op-1: key [{}], value [{}]", key, value), Named.as("no-op-node-1"))
+                .peek((key, value) -> {}, Named.as("no-op-node-1"))
                 .repartition()
-                .peek((key, value) -> log.info("no-op-2: key [{}], value [{}]", key, value), Named.as("no-op-node-2"))
+                .peek((key, value) -> {}, Named.as("no-op-node-2"))
+                .transformValues(() -> new StateStoreReadWriteTransformer(StateStoreUtils.STATE_STORE_1_NAME, WindowUtils.getDefaultTimeWindow()), StateStoreUtils.STATE_STORE_1_NAME)
                 .repartition()
-                .peek((key, value) -> log.info("no-op-3: key [{}], value [{}]", key, value), Named.as("no-op-node-3"))
+                .peek((key, value) -> {}, Named.as("no-op-node-3"))
                 .transformValues(() -> new PrimitiveRecordMarkEndTimestamp(metricsService))
                 .to(streamsExpProperties.getPrimitiveRecordSinkTopic());
 
@@ -108,15 +113,18 @@ public class PrimitiveProcessingTopologyBuilder {
         KStream<String, Double> inputStream = streamsBuilder.stream(streamsExpProperties.getPrimitiveRecordSourceTopic());
 
         inputStream
-                .peek((key, value) -> log.info("no-op-1: key [{}], value [{}]", key, value), Named.as("no-op-node-1"))
+                .transformValues(PrimitiveRecordMarkStartTimestamp::new)
+                .peek((key, value) -> {}, Named.as("no-op-node-1"))
                 .to("rp1");
 
         streamsBuilder.stream("rp1")
-                .peek((key, value) -> log.info("no-op-2: key [{}], value [{}]", key, value), Named.as("no-op-node-2"))
+                .peek((key, value) -> {}, Named.as("no-op-node-2"))
                 .to("rp2");
 
-        streamsBuilder.stream("rp2")
-                .peek((key, value) -> log.info("no-op-3: key [{}], value [{}]", key, value), Named.as("no-op-node-3"))
+        KStream<String, Double> finalSegment = streamsBuilder.stream("rp2");
+        finalSegment
+                .peek((key, value) -> {}, Named.as("no-op-node-3"))
+                .transformValues(() -> new PrimitiveRecordMarkEndTimestamp(metricsService))
                 .to(streamsExpProperties.getPrimitiveRecordSinkTopic());
 
         Topology topology = streamsBuilder.build();
