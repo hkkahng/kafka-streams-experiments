@@ -1,5 +1,6 @@
 package com.hk.kafkastreams.showcase;
 
+import com.hk.kafkastreams.showcase.metrics.DefaultMetricsService;
 import com.hk.kafkastreams.showcase.streams.PrimitiveProcessingTopologyBuilder;
 import com.hk.kafkastreams.showcase.utils.StreamConfigurationUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -17,6 +18,7 @@ import org.apache.kafka.streams.state.ReadOnlyWindowStore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,9 @@ public class TopologyTests {
     private static Serde<Double> doubleSerde;
     private static String singleTestKey;
 
+    @Mock
+    private DefaultMetricsService metricsService;
+
     @BeforeAll
     static void beforeAll() {
         streamsExpProperties = new StreamsExpProperties();
@@ -48,7 +53,7 @@ public class TopologyTests {
     @Test
     void sumAggregations() {
         String testKey = "474064ae-d634-467c-a8a4-6e4fe92e36f0";
-        PrimitiveProcessingTopologyBuilder primitiveProcessingTopologyBuilder = new PrimitiveProcessingTopologyBuilder(streamsExpProperties);
+        PrimitiveProcessingTopologyBuilder primitiveProcessingTopologyBuilder = new PrimitiveProcessingTopologyBuilder(streamsExpProperties, metricsService);
 
         try (TopologyTestDriver testDriver = new TopologyTestDriver(primitiveProcessingTopologyBuilder.sumAggregationTopology(), StreamConfigurationUtils.streamProperties())) {
             Map<String, StateStore> stateStores = testDriver.getAllStateStores();
@@ -87,7 +92,7 @@ public class TopologyTests {
 
     @Test
     void windowedCounts() {
-        PrimitiveProcessingTopologyBuilder primitiveProcessingTopologyBuilder = new PrimitiveProcessingTopologyBuilder(streamsExpProperties);
+        PrimitiveProcessingTopologyBuilder primitiveProcessingTopologyBuilder = new PrimitiveProcessingTopologyBuilder(streamsExpProperties, metricsService);
         Instant p001 = Instant.now();
         Instant p002 = p001.plusSeconds(65);
         Instant p003 = p002.plusSeconds(65);
@@ -145,7 +150,7 @@ public class TopologyTests {
 
     @Test
     void slidingWindowedCounts() {
-        PrimitiveProcessingTopologyBuilder primitiveProcessingTopologyBuilder = new PrimitiveProcessingTopologyBuilder(streamsExpProperties);
+        PrimitiveProcessingTopologyBuilder primitiveProcessingTopologyBuilder = new PrimitiveProcessingTopologyBuilder(streamsExpProperties, metricsService);
         Instant p001 = Instant.now();
         Instant p002 = p001.plusSeconds(61);
         Instant p003 = p002.plusSeconds(61);
