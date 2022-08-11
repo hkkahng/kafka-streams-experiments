@@ -1,6 +1,5 @@
 package com.fico.kafkastreams.showcase.metrics;
 
-import com.fico.kafkastreams.showcase.streams.PrimitiveProcessingService;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.binder.MeterBinder;
@@ -50,17 +49,6 @@ public class KafkaStreamsMetricsBinderService implements MeterBinder, KafkaStrea
                         log.info("adding [{}] as a gauge", metricName);
                         meterRegistry.gauge(metricName.toString(), (Double) entry.getValue().metricValue());
                     });
-/**
-            log.info("topology is running, registering metrics of interest");
-            kafkaStreams.metrics()
-                    .entrySet()
-                    .stream()
-                    .filter(entry -> entry.getKey().name().equals(E2E_LATENCY_AVG))
-                    .forEach(entry -> {
-                        log.info("adding [{}] as a gauge", entry.getKey().name());
-                        meterRegistry.gauge(entry.getKey().name(), generateStandardTags(entry.getKey().tags()), (Double) entry.getValue().metricValue());
-                    });
-**/
         }
     }
 

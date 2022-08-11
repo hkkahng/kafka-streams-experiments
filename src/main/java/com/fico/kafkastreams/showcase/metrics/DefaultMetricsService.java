@@ -1,7 +1,6 @@
 package com.fico.kafkastreams.showcase.metrics;
 
 import io.micrometer.core.instrument.DistributionSummary;
-import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +34,6 @@ public class DefaultMetricsService implements MetricsService {
                 .publishPercentiles(0.50, 0.75, 0.90, 0.95)
                 .publishPercentileHistogram()
                 .register(meterRegistry));
-
-        //log.info("meters found:");
-        //for (Meter meter : meterRegistry.getMeters()) {
-        //    log.info("{}", meter.getId().getName());
-        //}
     }
 
     @Override
