@@ -132,6 +132,28 @@ public class PrimitiveProcessingTopologyBuilder {
         return topology;
     }
 
+    public Topology stateStoreUsageTopologyNoRepartitions() {
+        streamsBuilder = new StreamsBuilder();
+        stateStoreUtils = new StateStoreUtils();
+        logSourceAndSinkTopicInfo();
+
+        streamsBuilder.addStateStore(stateStoreUtils.getWindowedStateStore(StateStoreUtils.STATE_STORE_1_NAME));
+
+        KStream<String, Double> inputStream = streamsBuilder.stream(streamsExpProperties.getPrimitiveRecordSourceTopic());
+
+        inputStream
+                .transformValues(PrimitiveRecordMarkStartTimestamp::new)
+                .peek((key, value) -> {}, Named.as("no-op-node-1"))
+                .transformValues(() -> new StateStoreReadWriteTransformer(StateStoreUtils.STATE_STORE_1_NAME, WindowUtils.getDefaultTimeWindow()), StateStoreUtils.STATE_STORE_1_NAME)
+                .transformValues(() -> new PrimitiveRecordMarkEndTimestamp(metricsService))
+                .to(streamsExpProperties.getPrimitiveRecordSinkTopic());
+
+        Topology topology = streamsBuilder.build();
+        log.info(topology.describe().toString());
+
+        return topology;
+    }
+
     public Topology noOpTopologyWithSimpleValueTransformer() {
         streamsBuilder = new StreamsBuilder();
 
