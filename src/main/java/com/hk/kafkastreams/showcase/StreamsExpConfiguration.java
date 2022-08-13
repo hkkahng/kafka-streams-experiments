@@ -72,7 +72,7 @@ public class StreamsExpConfiguration {
         streamProperties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "pkc-pgq85.us-west-2.aws.confluent.cloud:9092");
         streamProperties.put(StreamsConfig.SECURITY_PROTOCOL_CONFIG, "SASL_SSL");
         streamProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
-        streamProperties.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"RNS3WJ3IRGT3RFSP\" password=\"ChOg63Cgl40RRnDzwLNjU9jvijA2mvmFRZv6b8217sYkf7QlkUQoG1NNyS3QzhJf\";");
+        streamProperties.put(SaslConfigs.SASL_JAAS_CONFIG, "[put your confluent cloud credentials here]");
 
         return streamProperties;
     }
