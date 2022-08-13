@@ -79,7 +79,47 @@ public class PrimitiveProcessingTopologyBuilder {
         return topology;
     }
 
+    public Topology simpleOpTopology() {
+        streamsBuilder = new StreamsBuilder();
+        logSourceAndSinkTopicInfo();
+
+        KStream<String, Double> inputStream = streamsBuilder.stream(streamsExpProperties.getPrimitiveRecordSourceTopic());
+
+        inputStream
+                .transformValues(PrimitiveRecordMarkStartTimestamp::new)
+                .peek((key, value) -> {}, Named.as("no-op-node-1"))
+                .transformValues(() -> new PrimitiveRecordMarkEndTimestamp(metricsService))
+                .to(streamsExpProperties.getPrimitiveRecordSinkTopic());
+
+        Topology topology = streamsBuilder.build();
+        log.info(topology.describe().toString());
+
+        return topology;
+    }
+
     public Topology noOpWithRepartitionsTopology() {
+        streamsBuilder = new StreamsBuilder();
+        logSourceAndSinkTopicInfo();
+
+        KStream<String, Double> inputStream = streamsBuilder.stream(streamsExpProperties.getPrimitiveRecordSourceTopic());
+
+        inputStream
+                .transformValues(PrimitiveRecordMarkStartTimestamp::new)
+                .peek((key, value) -> {}, Named.as("no-op-node-1"))
+                .repartition()
+                .peek((key, value) -> {}, Named.as("no-op-node-2"))
+                .repartition()
+                .peek((key, value) -> {}, Named.as("no-op-node-3"))
+                .transformValues(() -> new PrimitiveRecordMarkEndTimestamp(metricsService))
+                .to(streamsExpProperties.getPrimitiveRecordSinkTopic());
+
+        Topology topology = streamsBuilder.build();
+        log.info(topology.describe().toString());
+
+        return topology;
+    }
+
+    public Topology repartitionsAndStateStoresTopology() {
         streamsBuilder = new StreamsBuilder();
         stateStoreUtils = new StateStoreUtils();
         logSourceAndSinkTopicInfo();
