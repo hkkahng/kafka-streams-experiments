@@ -83,13 +83,13 @@ public class PrimitiveProcessingTopologyBuilder {
         streamsBuilder = new StreamsBuilder();
         logSourceAndSinkTopicInfo();
 
-        KStream<String, Double> inputStream = streamsBuilder.stream(streamsExpProperties.getPrimitiveRecordSourceTopic());
+        KStream<String, Double> inputStream = streamsBuilder.stream(streamsExpProperties.getSinglePartitionSourceTopic());
 
         inputStream
                 .transformValues(PrimitiveRecordMarkStartTimestamp::new)
                 .peek((key, value) -> {}, Named.as("no-op-node-1"))
                 .transformValues(() -> new PrimitiveRecordMarkEndTimestamp(metricsService))
-                .to(streamsExpProperties.getPrimitiveRecordSinkTopic());
+                .to(streamsExpProperties.getSinglePartitionSinkTopic());
 
         Topology topology = streamsBuilder.build();
         log.info(topology.describe().toString());

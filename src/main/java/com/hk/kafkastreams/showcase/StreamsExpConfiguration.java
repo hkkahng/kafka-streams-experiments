@@ -95,7 +95,7 @@ public class StreamsExpConfiguration {
         //streamProperties.put(producerPrefix(ProducerConfig.COMPRESSION_TYPE_CONFIG), kafkaProperties.getCompression()); // default at producer level is none
         //streamProperties.put(producerPrefix(ProducerConfig.MAX_REQUEST_SIZE_CONFIG), kafkaProperties.getMaxRequestSizeBytes()); // default is 1048576 bytes
         //streamProperties.put(producerPrefix(ProducerConfig.MAX_BLOCK_MS_CONFIG), kafkaProperties.getMaxBlockMsConfig()); // default is 60000 ms
-        //streamProperties.put(producerPrefix(ProducerConfig.ACKS_CONFIG), kafkaProperties.getAcksConfig()); // default is ALL (-1) for EXACTLY_ONCE processing
+        streamProperties.put(producerPrefix(ProducerConfig.ACKS_CONFIG), "1"); // default is ALL (-1) for EXACTLY_ONCE processing
         //streamProperties.put(producerPrefix(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG), kafkaProperties.getTransactionTimeoutConfig()); // default is 60000 ms, FX custom is 100000
 
         //streamProperties.put(consumerPrefix(ConsumerConfig.MAX_POLL_RECORDS_CONFIG), 250); // default is 500, FX custom value is 250

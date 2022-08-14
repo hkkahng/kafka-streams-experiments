@@ -39,7 +39,7 @@ public class PrimitiveProcessingService {
 
         PrimitiveProcessingTopologyBuilder primitiveProcessingTopologyBuilder = new PrimitiveProcessingTopologyBuilder(streamsExpProperties, metricsService);
 
-        streams = new KafkaStreams(primitiveProcessingTopologyBuilder.noOpWithRepartitionsTopology(), streamProperties);
+        streams = new KafkaStreams(primitiveProcessingTopologyBuilder.simpleOpTopology(), streamProperties);
         //streams = new KafkaStreams(primitiveProcessingTopologyBuilder.noOpWithDirectRepartitionsTopology(), streamProperties);
         kafkaStreamsMetricsBinderService.setKafkaStreams(streams);
         streams.setStateListener(kafkaStreamsMetricsBinderService);
