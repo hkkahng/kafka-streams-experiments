@@ -1,6 +1,10 @@
 logging:
   level:
     root: INFO
+    org:
+      apache:
+        kafka:
+          clients: DEBUG
 
 management:
   endpoints:
@@ -17,18 +21,20 @@ server:
 
 spring:
   kafka:
+    admin:
+      client-id: basic-admin
     consumer:
-      bootstrap-servers: localhost:9092
       group-id: streams-showcase-consumer
       auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.DoubleDeserializer
       client-id: basic-consumer
     producer:
-      bootstrap-servers: localhost:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.DoubleSerializer
       client-id: basic-producer
+    properties:
+      bootstrap.servers: localhost:9092
 
 streamsexp:
   primitiveRecordSourceTopic: p-source
